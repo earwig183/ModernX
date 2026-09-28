@@ -132,6 +132,7 @@ local user_opts = {
     show_file_size = true,         -- show the current file's size in the description
     description_font_size = 19,    -- font size of the description text (below title)
     description_alpha = 100,       -- alpha of the description background box
+    description_load_text = "Loading description...",
     scrolling_speed = 40,          -- the speed of scrolling text in description/comment menus
 
     date_format = "%Y-%m-%d",      -- how dates should be formatted, when read from metadata (uses standard lua date formatting)
@@ -1663,7 +1664,7 @@ end
 local function newfilereset()
     request_init()
     state.downloaded_once = false
-    state.videoDescription = "Loading description..."
+    state.videoDescription = user_opts.description_load_text
     state.file_size_normalized = "Approximating size..."
     state.localDescription = "Loading..."
     state.localDescriptionIsClickable = false
@@ -1676,7 +1677,7 @@ end
 local function startupevents()
     state.new_file_flag = true
     set_tick_delay("display_fps", mp.get_property_number("display_fps"))
-    state.videoDescription = "Loading description..."
+    state.videoDescription = user_opts.description_load_text
     state.file_size_normalized = "Approximating size..."
     check_path_url()
     check_title()
@@ -3582,13 +3583,13 @@ local function osc_init()
         end
 
         if state.is_URL then
-            local title = "Loading description..."
+            local title = user_opts.description_load_text
             if state.descriptionLoaded then
                 title = state.videoDescription:sub(1, 300)
             end
             -- get rid of new lines
             title = string.gsub(title, '\\N', ' ')
-            return not (title == "") and title or "error"
+            return not (title == "") and title or "" -- "error"
         else
             if (state.localDescription == nil) then
                 return ""
